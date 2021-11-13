@@ -1,0 +1,64 @@
+
+version: "3.7"
+
+networks:
+    app:
+        driver: bridge
+        name: microservices
+    local:
+        driver: host
+
+volumes:
+    openthon_rabbitmq:
+
+services:
+    openthon_rabbitmq:
+        image: rabbitmq:3.8-management
+        container_name: openthon_rabbitmq
+        hostname: openthon_rabbitmq
+        cap_drop:
+            - NET_ADMIN
+            - SYS_ADMIN
+        environment:
+            HOSTNAME: rabbitmq_hostname_container
+            RABBITMQ_NODENAME: rabbitmq
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+        volumes:
+            - openthon_rabbitmq:/bitnami
+        ports:
+            - "4369:4369"
+            - "5672:5672"
+            - "25672:25672"
+            - "15672:15672"
+        expose:
+            - "15672"
+            - "5672"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+        deploy:
+            resources:
+                limits:
+                    memory: 2048M
+                    cpus: "1"
+                reservations:
+                    memory: 2048M
+
+    openthon_worker:
+        image: resolvrisk_bureau
+        container_name: resolvrisk_bureau
+        hostname: resolvrisk_bureau
+        build:
+            context: .
+            dockerfile: Dockerfile
+        depends_on:
+            - openthon_rabbitmq
+        environment:
+            BROKER_URL: pyamqp://guest:guest@openthon_rabbitmq:5672//
+
