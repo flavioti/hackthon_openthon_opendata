@@ -4,7 +4,7 @@ import requests
 
 
 class ResolvRiskClient:
-    def __init__(self):
+    def __init__(self) -> None:
 
         self.url = os.environ.get("URL")
         self.token = os.environ.get("TOKEN")
@@ -28,4 +28,4 @@ class ResolvRiskClient:
             },
         )
 
-        return r.content
+        return r.content.decode("utf-8")

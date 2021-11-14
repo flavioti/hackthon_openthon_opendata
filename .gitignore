@@ -2,3 +2,4 @@ dev/
 .env
 .vscode/
 src/__pycache__/
+celery.sqlite

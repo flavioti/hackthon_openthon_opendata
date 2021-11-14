@@ -1,6 +1,7 @@
+import json
 import logging
 
-from fastapi import BackgroundTasks, FastAPI
+from fastapi import BackgroundTasks, FastAPI, Response
 
 from .worker import celery_app
 
@@ -13,17 +14,6 @@ def background_on_message(task):
     pass
 
 
-@fastapi_app.get("/")
-async def ping(background_task: BackgroundTasks):
-    task = celery_app.send_task(
-        "src.worker.test_celery",
-        args=[],
-    )
-    background_task.add_task(background_on_message, task)
-
-    return {"message": "ok"}
-
-
 # http://127.0.0.1:8000/consultar_credito?cpf=xxxxxxxxxxx
 @fastapi_app.get("/consultar_credito")
 async def consultar_credito(cpf: str, background_task: BackgroundTasks):
@@ -33,4 +23,20 @@ async def consultar_credito(cpf: str, background_task: BackgroundTasks):
     )
     background_task.add_task(background_on_message, task)
 
-    return {"message": "ok"}
+    return Response(content=json.dumps({"status": "ok"}), status_code=200)
+
+
+@fastapi_app.get("/healthcheck")
+async def healthcheck():
+    return Response(content=json.dumps({"status": "ok"}), status_code=200)
+
+
+@fastapi_app.get("/consultadados")
+async def consulta_dados(cpf: str, background_task: BackgroundTasks):
+    task = celery_app.send_task(
+        "src.worker.consulta_dados_cliente_task",
+        args=[cpf],
+    )
+    result = task.wait(timeout=10, interval=0.5)
+
+    return Response(content=json.dumps(result), status_code=200)

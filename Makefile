@@ -1,6 +1,6 @@
 app_version := $(shell eval poetry version --short)
 
-.PHONY: build
+.PHONY: build run compose
 build:
 	@echo $(app_version)
 	docker build --no-cache --build-arg APP_VERSION=$(app_version) --tag resolvrisk_bureau:$(app_version) .
