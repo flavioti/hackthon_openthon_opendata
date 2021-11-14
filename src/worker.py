@@ -29,7 +29,7 @@ def consulta_credito_task(cpf):
 @celery_app.task(
     rate_limit="10/m",
 )
-def test_celery():
+def consulta_credito_task():
     print(datetime.now())
     # Query the table
     qldb_driver.execute_lambda(lambda executor: read_documents(executor))
