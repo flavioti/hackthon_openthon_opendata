@@ -4,9 +4,10 @@ import requests
 
 
 class ResolvRiskClient:
+    def __init__(self):
 
-    url = os.environ.get("URL")
-    token = os.environ.get("TOKEN")
+        self.url = os.environ.get("URL")
+        self.token = os.environ.get("TOKEN")
 
     def __do_request(self, endpoint: str, data: dict):
         r = requests.post(
