@@ -25,7 +25,7 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false \
     && poetry install --no-dev --no-interaction
 
-COPY deploy/celery-start.sh ./
+COPY deploy/worker/celery-start.sh ./
 COPY src ./
 
 EXPOSE 80

@@ -51,14 +51,19 @@ services:
                     memory: 2048M
 
     openthon_worker:
-        image: resolvrisk_bureau
-        container_name: resolvrisk_bureau
-        hostname: resolvrisk_bureau
+        image: openthon_worker
+        container_name: openthon_worker
+        hostname: openthon_worker
         build:
             context: .
-            dockerfile: Dockerfile
-        depends_on:
-            - openthon_rabbitmq
+            dockerfile: deploy/worker/Dockerfile
         environment:
-            BROKER_URL: pyamqp://guest:guest@openthon_rabbitmq:5672//
+            {BROKER_URL}
 
+    openthon_web:
+        image: openthon_web
+        container_name: openthon_web
+        hostname: openthon_web
+        build:
+            context: .
+            dockerfile: deploy/web/Dockerfile

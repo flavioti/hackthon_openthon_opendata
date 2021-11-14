@@ -12,3 +12,6 @@ run:
 	--log-opt max-size=10m \
 	--log-opt max-file=3 \
 	resolvrisk_bureau:$(app_version)
+
+compose:
+	docker-compose up --build --env-file .env

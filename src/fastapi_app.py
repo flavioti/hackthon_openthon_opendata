@@ -4,7 +4,7 @@ from fastapi import BackgroundTasks, FastAPI
 
 from .worker import celery_app
 
-app = FastAPI()
+fastapi_app = FastAPI()
 
 log = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ def background_on_message(task):
     pass
 
 
-@app.get("/")
+@fastapi_app.get("/")
 async def ping(background_task: BackgroundTasks):
     task_name = "src.worker.test_celery"
     task = celery_app.send_task(task_name, args=[])
