@@ -2,6 +2,7 @@ from pyqldb.config.retry_config import RetryConfig
 from pyqldb.driver.qldb_driver import QldbDriver
 from .celery_app import celery_app
 from datetime import datetime
+from .resolvrisk import ResolvRiskClient
 
 # Configure retry limit to 3
 retry_config = RetryConfig(retry_limit=3)
@@ -10,9 +11,23 @@ retry_config = RetryConfig(retry_limit=3)
 print("Initializing the driver")
 qldb_driver = QldbDriver("dataftwdb", retry_config=retry_config)
 
+# TODO: Implementar modelo v1
+# TODO: Executar modelo v1 com base nas variáveis de da resolvrisk e SPC
+
 
 @celery_app.task(
-    rate_limit="1/s",
+    rate_limit="10/m",
+)
+@celery_app.task()
+def consulta_credito_task(cpf):
+    print("Consultando credito")
+    rrc = ResolvRiskClient()
+    r = rrc.consulta_credito(cpf, 12)
+    print(r)
+
+
+@celery_app.task(
+    rate_limit="10/m",
 )
 def test_celery():
     print(datetime.now())
